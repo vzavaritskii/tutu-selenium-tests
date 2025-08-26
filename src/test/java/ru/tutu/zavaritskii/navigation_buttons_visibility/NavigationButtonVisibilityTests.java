@@ -156,15 +156,15 @@ public class NavigationButtonVisibilityTests {
     @DisplayName("NAV_BTN_VTS_008: Убедиться, что кнопка 'Джарвел' отображается на главной странице сайта.")
     void testJarvelButtonIsVisible() {
         // Поиск кнопки "Джарвел" по xpath
-        List<WebElement> adventureButtons = driver.findElements(By.xpath(
+        List<WebElement> jarvelButton = driver.findElements(By.xpath(
                 "//button[.//i[contains(@class, 'oim-jarvel')]]"));
         // Проверка, что кнопка найдена
-        assertFalse(adventureButtons.isEmpty(), "Кнопка 'Джарвел' не найдена");
+        assertFalse(jarvelButton.isEmpty(), "Кнопка 'Джарвел' не найдена");
         // Проверка, что найден только один элемент
-        assertEquals(adventureButtons.size(), 1, "Ожидался ровно один элемент, но найдено: " +
-                adventureButtons.size());
+        assertEquals(jarvelButton.size(), 1, "Ожидался ровно один элемент, но найдено: " +
+                jarvelButton.size());
         // Проверка, что кнопка отображается на странице
-        WebElement element = adventureButtons.get(0);
+        WebElement element = jarvelButton.get(0);
         assertTrue(element.isDisplayed(), "Кнопка 'Джарвел' не видна на странице");
     }
 
