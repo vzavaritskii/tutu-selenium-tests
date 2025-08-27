@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -367,6 +368,12 @@ public class NavigationButtonClickBehaviorTest {
     @Test
     @DisplayName("NAV_BTN_BEH_008: Убедиться, что при нажатии на кнопку \"Джарвел\" открывается модальное окно")
     void testJarvelButtonOpenModal () {
+        // Xpath контейнера с модалкой
+        String modalWindowXpath = "//*[@id=\"tutuSmart\"]";
+
+        // Значение атрибута 'class', указывающее на отображение модального окна
+        String jarvelModalWindowVisibleValue = "opened";
+
         // Поиск кнопки Джарвел по Xpath
         List<WebElement> jarvelButton = driver.findElements(By.xpath(navButtonsXpath.get("Джарвел")));
 
@@ -378,7 +385,26 @@ public class NavigationButtonClickBehaviorTest {
                 jarvelButton.size());
 
         // Клик по кнопке Джарвел
-        //jarvelButton.get(0).click();
+        jarvelButton.get(0).click();
+
+        // Поиск модального окна
+        List<WebElement> jarvelWindow = driver.findElements(By.xpath(modalWindowXpath));
+
+        // Проверка что контейнер найден
+        assertFalse(jarvelWindow.isEmpty(), "Контейнер с модальным окном 'Джарвел' не найден");
+
+        // Проверка что найден только один контейнер
+        assertEquals(1, jarvelWindow.size(), "Ожидался ровно один элемент, а найдено: " +
+                jarvelWindow.size());
+
+        //Ожидание появления значения 'opened' в 'class' контейнера
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.attributeContains(By.xpath(modalWindowXpath),
+                "class", jarvelModalWindowVisibleValue));
+
+        // Проверка, что модальное окно открылось
+        assertTrue(jarvelWindow.get(0).getAttribute("class").contains(jarvelModalWindowVisibleValue),
+                "Модальное окно 'Джарвел' не открылось");
     }
 
 
@@ -387,7 +413,60 @@ public class NavigationButtonClickBehaviorTest {
     @DisplayName("NAV_BTN_BEH_009: Убедиться, что после закрытия модального окна с \"Джарвел\" " +
             "кнопка остается без выделения")
     void testJarvelButtonCloseModal () {
+        // Xpath контейнера с модалкой
+        String modalWindowXpath = "//*[@id=\"tutuSmart\"]";
 
+        // Значение атрибута 'class', указывающее на отображение модального окна
+        String jarvelModalWindowVisibleValue = "opened";
+
+        // Поиск кнопки Джарвел по Xpath
+        List<WebElement> jarvelButton = driver.findElements(By.xpath(navButtonsXpath.get("Джарвел")));
+
+        // Проверка, что кнопка найдена
+        assertFalse(jarvelButton.isEmpty(), "Кнопка 'Джарвел' не найдена");
+
+        // Проверка, что найдена только одна кнопка
+        assertEquals(1, jarvelButton.size(), "Ожидался ровно один элемент, а найдено: " +
+                jarvelButton.size());
+
+        // Клик по кнопке Джарвел
+        jarvelButton.get(0).click();
+
+        // Поиск модального окна
+        List<WebElement> jarvelWindow = driver.findElements(By.xpath(modalWindowXpath));
+
+        // Проверка что контейнер найден
+        assertFalse(jarvelWindow.isEmpty(), "Контейнер с модальным окном 'Джарвел' не найден");
+
+        // Проверка что найден только один контейнер
+        assertEquals(1, jarvelWindow.size(), "Ожидался ровно один элемент, а найдено: " +
+                jarvelWindow.size());
+
+        //Ожидание появления значения 'opened' в 'class' контейнера
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.attributeContains(By.xpath(modalWindowXpath),
+                "class", jarvelModalWindowVisibleValue));
+
+        // Проверка, что модальное окно открылось
+        assertTrue(jarvelWindow.get(0).getAttribute("class").contains(jarvelModalWindowVisibleValue),
+                "Модальное окно 'Джарвел' не открылось");
+
+
+        // Клик "мимо" модального окна
+        WebElement backdrop = driver.findElement(By.cssSelector(".tutuSmart-backdrop"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", backdrop);
+
+        // Ожидание изменения состояния атрибута "class" в контейнере модального окна (закрытие)
+        WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait1.until(ExpectedConditions.not(ExpectedConditions.attributeContains(By.xpath(
+                modalWindowXpath), "class", jarvelModalWindowVisibleValue)));
+
+        // Проверка, что модальное окно закрылось
+        assertFalse(jarvelWindow.get(0).getAttribute("class").contains(jarvelModalWindowVisibleValue),
+                "Модальное окно 'Джарвел' не закрылось");
+
+        assertFalse(jarvelButton.get(0).getAttribute("class").contains(activeAtributeValue),
+                "Кнопка 'Джарвел' активна (выделена) после закрытия модального окна");
     }
 
 
